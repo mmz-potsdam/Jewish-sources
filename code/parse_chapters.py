@@ -1,15 +1,16 @@
 import re
 from pathlib import Path
-from typing import TextIO, Iterable, NamedTuple, Iterator
+from typing import TextIO, Iterable, NamedTuple, Iterator, Union
 
+PageNumber = Union[int, None]
 
 class SectionPage(NamedTuple):
-    number: int | None
+    number: PageNumber
     title: str
 
 
 class BlankPage(NamedTuple):
-    number: int | None
+    number: PageNumber
 
 
 class Header(NamedTuple):
@@ -17,12 +18,12 @@ class Header(NamedTuple):
     text: str
     
 class Page(NamedTuple):
-    number: int | None
+    number: PageNumber
     header: Header
     content: list[str]
 
 
-PageTypes =  BlankPage | SectionPage | Page
+PageTypes =  Union[BlankPage, SectionPage, Page]
 
 
 def eat_blanks(page_iter):
@@ -53,13 +54,13 @@ def parse_page(page: list[str]):
 
 
 def classify_page(page: list[str]) -> PageTypes:
-    match [line for line in page if line]:
-        case []:
-            return BlankPage(None)
-        case [section_name]:
-            return SectionPage(None, section_name)
-        case stripped_page:
-            return parse_page(page)
+    lines = [line for line in page if line]
+    if not lines:
+        return BlankPage(None)
+    elif len(lines) == 1:
+        return SectionPage(None, section_name)
+    else:
+        return parse_page(page)
     
 
 def split_pages(file: TextIO):
