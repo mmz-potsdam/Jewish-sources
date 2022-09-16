@@ -23,6 +23,25 @@ class Page(NamedTuple):
     content: list[str]
 
 
+def update_page_number(page, number):
+    if isinstance(page, SectionPage):
+        return SectionPage(number, page.title)
+    if isinstance(page, BlankPage):
+        return BlankPage(number)
+    else:
+        content = []
+        for i, line in enumerate(page.content):
+            try:
+                num = int(line)
+                if (num == number and i > 0) and (not page.content[i-1] and not page.content[i+1]):
+                        content.pop()
+                else:
+                    content.append(line)
+            except ValueError:
+                content.append(line)
+        return Page(number, page.header, content)
+
+
 PageTypes =  Union[BlankPage, SectionPage, Page]
 
 
@@ -58,15 +77,36 @@ def classify_page(page: list[str]) -> PageTypes:
     if not lines:
         return BlankPage(None)
     elif len(lines) == 1:
-        return SectionPage(None, section_name)
+        return SectionPage(None, lines[0])
     else:
         return parse_page(page)
+
+class PaginationError(Exception):
+    pass
+
+def normalize_page_numbers(pages: Iterable[PageTypes]):
+    pages = list(pages)
+    for i, page in enumerate(pages):
+        if page.number:
+            first_number = page.number
+            break
+    tracker = first_number - i
+    for page in pages:
+        if page.number:
+            if page.number == tracker:
+                yield page
+            else:
+                yield update_page_number(page, tracker)
+        else:
+            yield update_page_number(page, tracker)
+        tracker += 1
     
 
 def split_pages(file: TextIO):
     pages_text = file.read().split("\f")
     pages_lines = [p.splitlines() for p in pages_text]
-    return map(classify_page, pages_lines)
+    unnumbered = map(classify_page, pages_lines)
+    return normalize_page_numbers(unnumbered)
 
 def extract_content(pages: Iterable[PageTypes]) -> Iterator[str]:
     for page in pages:
