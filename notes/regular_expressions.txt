@@ -1,0 +1,56 @@
+List of operations
+Remove page numbers
+^5[0-9]{2}$
+
+Remove page headers
+
+e.g Personenregister
+
+^Personenregister\r\n
+
+Find rows that ends with special char as , - their next row starts with a number
+^(.+[\),\-0-9])\r\n([0-9].+\r)
+replace with
+$1 $2
+
+Repeat 
+
+Find rows that end with
+^(.+[,\-\)])\r\n(.+\r)
+
+Then rows than begin in numbers
+^(.+)\r\n([0-9]+\r)
+^(.+)\r\n([0-9].+\r)
+and replace with $1 $2
+
+---
+OpenRefine
+
+value.find(/[0-9][^A-Z]+[0-9]+.?$/) --> extract all entriesID
+
+
+Archives _ chapter
+
+1/ identify page numbers
+
+2/ Identify header
+^([1-9][0-9]{1})\r\n([^\r]+)\r\n
+ 
+with
+<pn>$1</pn>\n##header##$2##end_header##|$1
+
+3/ turn page numbers into <pn>
+
+Identify new entries
+^([1-9][0-9]{0,2} |[1-9][0-9]{0,2}/[1-9][0-9a-z]*) 
+
+^(([1-9][0-9]{0,2}[^.\D0-9]?)|([1-9][0-9]{0,2}/[1-9][0-9a-z]*))( [^);\n\r]*)$
+chapter 2
+
+^(([1-9][0-9]{2,3}[^.\D0-9]?)|([1-9][0-9]{2,3}/[1-9][0-9a-z]*))( [^);\n\r]*)$
+
+Chapter 3 volume I
+^(([1][1-7][0-9]{2}[^.\D0-9]?)|([1][0-9]{3}/[1-9][0-9a-z]*))( [^);\n\r]*)$
+^(([1][1-7][0-9]{2}[^\D0-9]?)|([1][0-9]{3}/[1-9][0-9a-z]*))( [^;\n\r]*)$
+API for deepL
+b32360ad-5985-196d-89c9-d86964f10083:fx
