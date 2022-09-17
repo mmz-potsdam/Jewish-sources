@@ -139,7 +139,7 @@ def serialize(data: NamedTuple, ensure_ascii=False, **kwargs):
         **kwargs,
     )
 
-def serialize_iterable(data: Iterable[NamedTuple] ensure_ascii=False, **kwargs):
+def serialize_iterable(data: Iterable[NamedTuple], ensure_ascii=False, **kwargs):
     import json
     return json.dumps(
         [_serialize(el) for el in data],
@@ -155,9 +155,7 @@ def main():
     with open(input_file) as fh:
         pages = split_pages(fh)
         
-    for page in pages:
-        print(serialize(page, indent=1))
-
+    print(serialize_iterable(pages, indent=1))
 
 if __name__ == "__main__":
     main()
