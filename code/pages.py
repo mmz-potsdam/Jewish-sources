@@ -86,8 +86,8 @@ def trim_content(mut_content):
 
 
 def parse_page(page: Iterable[str]):
-    """take a list of lines that is not a section page or a blank page
-    and construct a normal Page type.
+    """take a list of lines that is not a section page or a blank page and
+    construct a normal Page type.
 
     """
     lines = iter(page)
@@ -128,8 +128,8 @@ def classify_page(page: Iterable[str]) -> Union[Page, PendingPage]:
 
 
 def normalize_page_numbers(pages: Iterable[Union[Page, PendingPage]]):
-    """take an iterable of pages, some of which may not have numbers and
-    add numbers. Also correct page numbers which were added incorrectly
+    """take an iterable of pages, some of which may not have numbers and add
+    numbers. Also correct page numbers which were added incorrectly
 
     """
     pages = list(pages)
@@ -150,14 +150,14 @@ def normalize_page_numbers(pages: Iterable[Union[Page, PendingPage]]):
     
 
 def split_pages(file: TextIO):
-    """take an opened PDF file from the collection as input (after the
-    frontmatter) and return an iterator of PageTypes.
+    """take an opened text file extracted from the pdfs from the collection as
+    input (after the frontmatter) and return an iterator of PageTypes.
 
     """
     pages_text = file.read().split("\f")
     pages_lines = [p.splitlines() for p in pages_text]
     unnumbered = map(classify_page, pages_lines)
-    return normalize_page_numbers(unnumbered)
+    return list(normalize_page_numbers(unnumbered))
 
 
 def _serialize(data: Union[NamedTuple, object]):
@@ -172,8 +172,8 @@ def _serialize(data: Union[NamedTuple, object]):
 
 
 def serialize(data: NamedTuple, ensure_ascii=False, **kwargs):
-    """take a named tuple composed of JSON compatible types and return a
-    JSON object.
+    """take a named tuple composed of JSON compatible types and return a JSON
+    object.
 
     """
     import json
@@ -184,8 +184,8 @@ def serialize(data: NamedTuple, ensure_ascii=False, **kwargs):
     )
 
 def serialize_iterable(data: Iterable[NamedTuple], ensure_ascii=False, **kwargs):
-    """take an iterable of named tuples composed of JSON compatible types
-    and return a JSON array.
+    """take an iterable of named tuples composed of JSON compatible types and
+    return a JSON array.
 
     """
     import json
@@ -197,8 +197,8 @@ def serialize_iterable(data: Iterable[NamedTuple], ensure_ascii=False, **kwargs)
 
 
 def all_page_content(pages: Iterable[PageTypes]):
-    """convert an iterable of PageTypes to a list where each item is
-    3-tuple of (page number, page header text, single line of text)
+    """convert an iterable of PageTypes to a list where each item is 3-tuple of
+    (page number, page header text, single line of text)
 
     """
     pages =  (p for p in pages if isinstance(p, Page))
@@ -206,9 +206,9 @@ def all_page_content(pages: Iterable[PageTypes]):
 
 
 def main():
-    """take a pdf filename from the collection (after the frontmatter)
-    and print a JSON array of lines with their page numbers, header text,
-    line text.
+    """take a filename for a text file extracted from a pdf from the collection
+    (after the frontmatter) and print a JSON array of lines with their page
+    numbers, header text, line text.
 
     """
     import sys
