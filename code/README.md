@@ -47,8 +47,9 @@ $ python3 pages.py /path/to/text_of_pdf_file_from_catalog.pdf.txt
 ```
 
 The input file here should _not_ be from the frontmatter. The output
-will be a JSON array of lines as output the `all_page_content`
-function.
+will a csv file of lines in the input file formated similarly to the
+as output the `all_page_content` function. (page number, page header,
+line content)
 
 ## entries module
 

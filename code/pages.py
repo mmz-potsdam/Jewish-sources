@@ -212,17 +212,17 @@ def main():
 
     """
     import sys
-    import json
+    import csv
     input_file = sys.argv[1]
 
     with open(input_file) as fh:
         pages = split_pages(fh)
 
-    print("[", end="")
-    print("\n,".join(
-        json.dumps(l, ensure_ascii=False) for l in all_page_content(pages))
-    )
-    print("]")
+    writer = csv.writer(sys.stdout)
+    writer.writerows(all_page_content(pages))
+    
+
+
 
 
 if __name__ == "__main__":
