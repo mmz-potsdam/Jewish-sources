@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import TextIO, Iterable, NamedTuple, Iterator, Union
+from typing import TextIO, Iterable, NamedTuple, Iterator, Union, List
 from functools import singledispatch
 
 PageNumber = Union[int, None]
@@ -14,7 +14,7 @@ class Header(NamedTuple):
 class Page(NamedTuple):
     number: PageNumber
     header: Header
-    content: list[str]
+    content: List[str]
 
 
 class SectionPage(NamedTuple):
@@ -73,9 +73,17 @@ def parse_page(page: Iterable[str]):
     middle = list(reversed(list(backwards)))
     try:
         number = int(line)
+        while middle[0] == '':
+            middle = middle[1:]
+        while middle[-1] == '':
+            middle.pop()
         return Page(number, header, middle)
     except ValueError:
         middle.append(line)
+        while middle[0] == '':
+            middle = middle[1:]
+        while middle[-1] == '':
+            middle.pop()
         return Page(None, header, middle)
 
 
@@ -118,12 +126,6 @@ def split_pages(file: TextIO):
     return normalize_page_numbers(unnumbered)
 
 
-def extract_content(pages: Iterable[PageTypes]) -> Iterator[str]:
-    for page in pages:
-        if isinstance(page, Page):
-            yield from page.content
-
-
 def _serialize(data: Union[NamedTuple, object]):
     if not isinstance(data, tuple):
         return data
@@ -146,6 +148,11 @@ def serialize_iterable(data: Iterable[NamedTuple], ensure_ascii=False, **kwargs)
         ensure_ascii=ensure_ascii,
         **kwargs,
     )
+
+
+def all_page_content(pages: Iterable[PageTypes]):
+    pages: List[pages_.Page] =  [p for p in pages if isinstance(p, pages_.Page)]
+    return [(p.number, p.header.text, l) for p in pages for l in p.content]
 
 
 def main():
